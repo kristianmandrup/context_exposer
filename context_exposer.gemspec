@@ -8,9 +8,9 @@ Gem::Specification.new do |spec|
   spec.version       = ContextExposer::VERSION
   spec.authors       = ["Kristian Mandrup"]
   spec.email         = ["kmandrup@gmail.com"]
-  spec.description   = %q{Exposes a Context object to the View}
-  spec.summary       = %q{The Context object is the single connection point between View and Controller, no pollution of the View :)}
-  spec.homepage      = ""
+  spec.description   = %q{Exposes a ViewContext object to the View with all the data needed by the view}
+  spec.summary       = %q{The Context object becomes the single communication point between View and Controller}
+  spec.homepage      = "https://github.com/kristianmandrup/context_exposer"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
