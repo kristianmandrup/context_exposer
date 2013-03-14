@@ -4,13 +4,10 @@ require 'action_controller'
 class MyController < ActionController::Base
   include ContextExposer::BaseController
   
-  exposed(:bird) { "Bird" }
+  exposed(:post) { Post.find params[:id] }
 
   def post
-    configure_exposed_context
   end
-
-  def params; end
 end
 
 class MyCoolController < ActionController::Base
