@@ -1,0 +1,1 @@
+# Run Capybara Spec on Dummy app PostsController
