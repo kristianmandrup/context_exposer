@@ -1,9 +1,11 @@
 class ContextExposer::ViewContext
   attr_reader :controller
 
-  def initialize controller
+  def initialize controller = nil
     @controller = controller
   end
+
+  protected
 
   def define_singleton_method(name, &block)
     eigenclass = class<<self; self end

@@ -7,9 +7,34 @@ class MyController < ActionController::Base
   exposed(:bird) { "Bird" }
 
   def post
+    configure_exposed_context
   end
 
   def params; end
+end
+
+class MyCoolController < ActionController::Base
+  include ContextExposer::BaseController
+  
+  exposed(:coolness) { "MegaCool" }
+
+  view_context_class :mega_cool_view_context
+
+  def show
+    configure_exposed_context
+  end
+
+  def params; end
+end
+
+class MegaCoolViewContext < ContextExposer::ViewContext
+  def initialize controller
+    super
+  end
+
+  def power_of number
+    number * number
+  end
 end
 
 describe ContextExposer::BaseController do
@@ -40,10 +65,6 @@ describe ContextExposer::BaseController do
       expect(subject.hidden_actions).to include("context")
     end
 
-    it 'ran before filter :a_filter' do
-      expect(subject.a).to_not be_nil
-    end
-
     it 'configured exposed context' do
       expect(subject.configured_exposed_context?).to be_true
     end
@@ -55,7 +76,7 @@ describe ContextExposer::BaseController do
         expect(subject).to be_a ContextExposer::ViewContext
       end      
 
-      it "defined a method :bird" do
+      it "defines a method :bird" do
         expect(subject).to respond_to(:bird)
       end      
 
@@ -63,5 +84,48 @@ describe ContextExposer::BaseController do
         expect(subject.bird).to eq "Bird"
       end      
     end
+  end
+
+  describe 'MyCoolController' do
+    subject { controller }
+
+    let(:controller) { MyCoolController.new }
+
+    # run action post
+    before :each do
+      controller.show
+    end
+
+    context 'context' do
+      subject { controller.context }
+
+      it "inherits from ContextExposer::ViewContext" do
+        expect(subject).to be_a ContextExposer::ViewContext
+      end      
+
+      it "is an instance of MegaCoolViewContext" do
+        expect(subject).to be_a MegaCoolViewContext
+      end      
+
+      it "has reference to controller" do
+        expect(subject.controller).to eq controller
+      end      
+
+      it "defines a method :coolness" do
+        expect(subject).to respond_to(:coolness)
+      end      
+
+      it "calling method :coolness returns 'MegaCool' " do
+        expect(subject.coolness).to eq "MegaCool"
+      end      
+
+      it "defines a method :power_of" do
+        expect(subject).to respond_to(:power_of)
+      end      
+
+      it "calling method :power_of(2) returns 4" do
+        expect(subject.power_of 2).to eq 4
+      end      
+    end    
   end
 end

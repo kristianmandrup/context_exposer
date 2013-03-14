@@ -2,8 +2,6 @@ module ContextExposer::BaseController
   extend ActiveSupport::Concern
 
   included do
-    attr_reader :a
-
     before_filter :configure_exposed_context
 
     expose_context :context
@@ -16,11 +14,12 @@ module ContextExposer::BaseController
 
   module ClassMethods
     def exposed name, &block
+      # puts "store: #{name} in hash storage for class #{self}"
       exposure_storage[name.to_sym] = block
     end
 
     def view_context_class name
-      define_method name do
+      define_method :view_context_class do
         @view_context_class ||= name.kind_of?(Class) ? name : name.to_s.camelize.constantize
       end
     end
@@ -45,7 +44,7 @@ module ContextExposer::BaseController
     end
 
     def exposure_storage
-      exposure_hash[self.class.to_s] ||= {}
+      exposure_hash[self.to_s] ||= {}
     end
 
     def exposure_hash
@@ -53,16 +52,14 @@ module ContextExposer::BaseController
     end
   end
 
-  def a_filter
-    puts "a_filter"
-    @a = true
-  end
-
   # must be called after Controller is instantiated
   def configure_exposed_context
     return if configured_exposed_context?
-    exposure_hash[self.class.to_s].each do |name, procedure|
-      view_context.define_singleton_method name do 
+    clazz = self.class
+    exposed_methods = clazz.send(:exposure_hash)[clazz.to_s] || []
+    # puts "exposed_methods for: #{clazz} - #{exposed_methods}"
+    exposed_methods.each do |name, procedure|
+      view_context.send :define_singleton_method, name do 
         procedure.call
       end
     end
