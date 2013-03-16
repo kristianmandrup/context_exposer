@@ -36,6 +36,14 @@ class PostsController < ActionController::Base
 end
 ```
 
+HAML view example
+
+```haml
+%h1 Posts
+= context.posts.each do |post|
+  %h2 = post.name
+```
+
 You can also define your own subclass of `ViewContext` and designate an instance of this custom class as your "exposed" target, via  `view_context_class`method.
 
 Example:
@@ -47,7 +55,7 @@ class PostsController < ActionController::Base
   view_context_class :posts_view_context
 
   exposed(:post)  { Post.find params[:id] }
-  exposed(:posts) { Post.find params[:id] }
+  exposed(:posts) { Post.all }
 end
 ```
 
@@ -78,21 +86,24 @@ class PostsViewContext < ContextExposer::ViewContext
 end
 ```
 
+HAML view example
+
+```haml
+%h1 Admin Posts
+= context.admin_posts.each do |post|
+  %h2 = post.name
+```
+
+
 This opens up some amazing possibilities to really put the logic where it belongs.The custom ViewContext would benefit from having the "admin" and "user" logic extracted either to separate modules or a custom ViewContext base class ;)
 
 This approach opens up many new exciting ways to slice and dice your logic in a much better way, a new *MVC-C* architecture, the extra "C" for *Context*.
 
-
-## TODO
-
-Add some useful subclasses of `BaseController`, that add some extra magic!
-Also add some basic modules to integrate with typical authentication solutions etc. Get inspiration from other similar gems, fx `decent_exposure`. Allow for integration between these different solutions.
-
 ### ResourceController
 
-It sould be nice to have a `ResourceController` to automatically set up the typical singular and plural-form resource helpers.
+The `ResourceController` automatically sets up the typical singular and plural-form resource helpers.
 
-This would simplify the above `PostsController` example to this:
+This simplifies the above `PostsController` example to this:
 
 ```ruby
 class PostsController < ActionController::Base
@@ -100,7 +111,53 @@ class PostsController < ActionController::Base
 end
 ```
 
-Please help out :)
+`ResourceController`  uses the following internal logic for its default functionality. You can override these methods to customize your behavior as needed.
+
+```ruby
+module ContextExposer::ResourceController
+  # ...
+
+  protected
+
+  def resource_id
+    params[:id]
+  end
+
+  def find_single_resource
+    self.class._the_resource.find resource_id
+  end
+
+  def find_all_resources
+    self.class._the_resource.all
+  end
+```
+
+## Integration with decent_exposure gem
+
+Initial integration support is included for `decent_exposure`, another popular gem with similar functionality. To add methods exposed by `decent_exposure` `#expose` to the context object, simply call `#context_expose_decently` or the alias method `#expose_decently`.
+
+```ruby
+# using gem 'decent_exposure'
+# auto-included in ActionController::Base
+
+class PostsController < ActionController::Base
+  include ContextExposer::ResourceController
+
+  expose(:posts)
+  expose(:post) { Post.first}
+  expose(:postal)
+
+  context_expose_decently except: 'postal'
+end
+```
+
+HAML view example
+
+```haml
+%h1 Posts
+= context.posts.each do |post|
+  %h2 = post.name
+```
 
 ## Contributing
 

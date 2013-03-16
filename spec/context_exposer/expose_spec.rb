@@ -4,10 +4,20 @@ require 'action_controller'
 class MyController < ActionController::Base
   include ContextExposer::BaseController
   
-  exposed(:post) { Post.find params[:id] }
+  exposed(:bird) { "Bird" }
 
-  def post
+  # since: extend DecentExposure::Exposure
+  def self._exposures
+    {decent: 'hi', hello: 'yo!'}
+  end  
+
+  expose_decently except: %w{hello}
+
+  def show
+    configure_exposed_context
   end
+
+  protected
 end
 
 class MyCoolController < ActionController::Base
@@ -21,7 +31,9 @@ class MyCoolController < ActionController::Base
     configure_exposed_context
   end
 
-  def params; end
+  protected
+
+  def params; end  
 end
 
 class MegaCoolViewContext < ContextExposer::ViewContext
@@ -43,11 +55,11 @@ describe ContextExposer::BaseController do
 
     # run action post
     before :each do
-      controller.post
+      controller.show
     end
 
-    it 'defines :post as an action_method' do
-      expect(subject.action_methods).to include('post')
+    it 'defines :show as an action_method' do
+      expect(subject.action_methods).to include('show')
     end
 
     it "defines a method context" do
@@ -75,6 +87,14 @@ describe ContextExposer::BaseController do
 
       it "defines a method :bird" do
         expect(subject).to respond_to(:bird)
+      end      
+
+      it "defines a method :decent" do
+        expect(subject).to respond_to(:decent)
+      end      
+
+      it "does not defines a decent method :hello" do
+        expect(subject).to_not respond_to(:hello)
       end      
 
       it "calling method :bird returns 'Bird' " do

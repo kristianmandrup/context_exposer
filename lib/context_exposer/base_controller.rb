@@ -5,6 +5,8 @@ module ContextExposer::BaseController
     before_filter :configure_exposed_context
 
     expose_context :context
+
+    # set_callback :process_action, :before, :configure_exposed_context
   end
 
   def view_context    
@@ -18,6 +20,26 @@ module ContextExposer::BaseController
       exposure_storage[name.to_sym] = block
     end
 
+    # expose all exposures exposed by decent_exposure to context
+    def context_expose_decently options = {}
+      transfer_keys = _exposures.keys
+      except = (options[:except] || {}).map(&:to_sym)
+      only = (options[:only] || {}).map(&:to_sym)
+
+      transfer_keys = transfer_keys - except
+
+      unless only.empty?
+        transfer_keys.select {|k| only.include? k.to_sym } 
+      end
+
+      transfer_keys.each do |exposure|
+        exposed exposure do
+          send(exposure)
+        end
+      end
+    end
+    alias_method :expose_decently, :context_expose_decently 
+
     def view_context_class name
       define_method :view_context_class do
         @view_context_class ||= name.kind_of?(Class) ? name : name.to_s.camelize.constantize
@@ -28,6 +50,7 @@ module ContextExposer::BaseController
 
     def expose_context name
       return if exposed_view_context?
+
       if ActionController::Base.instance_methods.include?(name.to_sym)
         Kernel.warn "[WARNING] You are exposing the `#{name}` method, " \
           "which overrides an existing ActionController method of the same name. " \
@@ -40,7 +63,7 @@ module ContextExposer::BaseController
     end
 
     def exposed_view_context?
-      @exposed_view_context ||= false
+      @exposed_view_context == true
     end
 
     def exposure_storage
@@ -57,10 +80,10 @@ module ContextExposer::BaseController
     return if configured_exposed_context?
     clazz = self.class
     exposed_methods = clazz.send(:exposure_hash)[clazz.to_s] || []
-    # puts "exposed_methods for: #{clazz} - #{exposed_methods}"
     exposed_methods.each do |name, procedure|
+      this = self
       view_context.send :define_singleton_method, name do 
-        procedure.call
+        this.instance_eval(&procedure)
       end
     end
     @configured_exposed_context = true
