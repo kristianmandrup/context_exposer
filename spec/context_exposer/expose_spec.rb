@@ -11,6 +11,8 @@ class MyController < ActionController::Base
     {decent: 'hi', hello: 'yo!'}
   end  
 
+  integrate_with :decent_exposure
+
   expose_decently except: %w{hello}
 
   def show
@@ -25,7 +27,7 @@ class MyCoolController < ActionController::Base
   
   exposed(:coolness) { "MegaCool" }
 
-  view_context_class :mega_cool_view_context
+  view_ctx_class :mega_cool_view_context
 
   def show
     configure_exposed_context
@@ -63,15 +65,15 @@ describe ContextExposer::BaseController do
     end
 
     it "defines a method context" do
-      expect(subject).to respond_to(:context)
+      expect(subject).to respond_to(:ctx)
     end
 
     it "exposes the context to the view layer as a helper" do
-      expect(subject._helper_methods).to include(:context)
+      expect(subject._helper_methods).to include(:ctx)
     end
 
     it "prevents the context method from being routable" do
-      expect(subject.hidden_actions).to include("context")
+      expect(subject.hidden_actions).to include("ctx")
     end
 
     it 'configured exposed context' do
@@ -79,7 +81,7 @@ describe ContextExposer::BaseController do
     end
 
     context 'context' do
-      subject { controller.context }
+      subject { controller.ctx }
 
       it "is an instance of ContextExposer::ViewContext" do
         expect(subject).to be_a ContextExposer::ViewContext
@@ -114,7 +116,7 @@ describe ContextExposer::BaseController do
     end
 
     context 'context' do
-      subject { controller.context }
+      subject { controller.ctx }
 
       it "inherits from ContextExposer::ViewContext" do
         expect(subject).to be_a ContextExposer::ViewContext

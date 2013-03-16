@@ -3,15 +3,16 @@ module ContextExposer
     class KeyFilter
       attr_reader :keys, :options
 
-      def initializee keys, options = {}
-        @keys = keys
+      def initialize keys, options = {}
+        @keys = keys || []
         @options = options
       end
 
       # expose all exposures exposed by decent_exposure to context
       def filter
-        keys = keys - except
-        only.empty? ? keys : keys.select {|k| only.include? k.to_sym } 
+        puts "keys: #{keys} - #{except}"
+        the_keys = keys - except
+        only.empty? ? the_keys : the_keys.select {|k| only.include? k.to_sym } 
       end
 
       def except

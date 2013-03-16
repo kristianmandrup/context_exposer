@@ -68,15 +68,15 @@ describe ContextExposer::ResourceController do
       end
 
       it "defines a method context" do
-        expect(subject).to respond_to(:context)
+        expect(subject).to respond_to(:ctx)
       end
 
       it "exposes the context to the view layer as a helper" do
-        expect(subject._helper_methods).to include(:context)
+        expect(subject._helper_methods).to include(:ctx)
       end
 
       context 'context' do
-        subject { controller.context }
+        subject { controller.ctx }
 
         it "is an instance of ContextExposer::ViewContext" do
           expect(subject).to be_a ContextExposer::ViewContext
