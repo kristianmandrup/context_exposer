@@ -19,7 +19,7 @@ module ContextExposer::BaseController
   module ClassMethods
     def exposed name, &block
       # puts "store: #{name} in hash storage for class #{self}"
-      exposure_storage[name.to_sym] = block
+      _exposure_storage[name.to_sym] = block
     end
 
     def view_ctx_class name
@@ -45,19 +45,19 @@ module ContextExposer::BaseController
       end    
       helper_method name
       hide_action name
-      @exposed_view_context = true
+      @_exposed_view_context = true
     end
 
     def exposed_view_context?
-      @exposed_view_context == true
+      @_exposed_view_context == true
     end
 
-    def exposure_storage
-      exposure_hash[self.to_s] ||= {}
+    def _exposure_storage
+      _exposure_hash[self.to_s] ||= {}
     end
 
-    def exposure_hash
-      @exposure_hash ||= {}
+    def _exposure_hash
+      @_exposure_hash ||= {}
     end
   end
 
@@ -65,7 +65,7 @@ module ContextExposer::BaseController
   def configure_exposed_context
     return if configured_exposed_context?
     clazz = self.class
-    exposed_methods = clazz.send(:exposure_hash)[clazz.to_s] || []
+    exposed_methods = clazz.send(:_exposure_hash)[clazz.to_s] || []
     exposed_methods.each do |name, procedure|
       this = self
       view_ctx.send :define_singleton_method, name do 

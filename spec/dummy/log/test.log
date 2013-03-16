@@ -2272,3 +2272,16 @@ Completed 200 OK in 15ms (Views: 14.7ms)
 Started GET "/posts" for 127.0.0.1 at 2013-03-16 12:09:07 +0100
 Processing by PostsController#index as HTML
 Completed 200 OK in 3ms (Views: 3.0ms)
+Started GET "/posts" for 127.0.0.1 at 2013-03-16 12:19:41 +0100
+Processing by PostsController#index as HTML
+Completed 500 Internal Server Error in 1ms
+Started GET "/posts" for 127.0.0.1 at 2013-03-16 12:19:41 +0100
+Processing by PostsController#index as HTML
+Completed 500 Internal Server Error in 0ms
+Started GET "/posts" for 127.0.0.1 at 2013-03-16 12:19:55 +0100
+Processing by PostsController#index as HTML
+  Rendered posts/index.html.erb within layouts/application (1.9ms)
+Completed 200 OK in 16ms (Views: 15.4ms)
+Started GET "/posts" for 127.0.0.1 at 2013-03-16 12:19:55 +0100
+Processing by PostsController#index as HTML
+Completed 200 OK in 2ms (Views: 1.8ms)
