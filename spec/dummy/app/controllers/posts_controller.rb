@@ -1,9 +1,8 @@
 class PostsController < ApplicationController
   include ContextExposer::BaseController
 
-  exposed(:post) { 'A post '}
-
-  exposed(:posts) { ['A post ', 'Another post'] }
+  exposed(:post)  { posts.first }
+  exposed(:posts) { ['Post 1', 'Post 2'] }
 
   def show    
   end

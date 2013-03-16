@@ -2,11 +2,10 @@ module ContextExposer::BaseController
   extend ActiveSupport::Concern
 
   included do
-    before_filter :configure_exposed_context
+    # before_filter :configure_exposed_context
+    set_callback :process_action, :before, :configure_exposed_context
 
-    expose_context :context
-
-    # set_callback :process_action, :before, :configure_exposed_context
+    expose_context :context    
   end
 
   def view_context    

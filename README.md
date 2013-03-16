@@ -159,6 +159,10 @@ HAML view example
   %h2 = post.name
 ```
 
+## TODO
+
+Set up tests on dummy app ;)
+
 ## Contributing
 
 1. Fork it
