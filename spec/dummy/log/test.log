@@ -2161,3 +2161,114 @@ Creating scope :near. Overwriting existing method Property.near.
   MOPED: 127.0.0.1:27017 UPDATE       database=fr_test collection=properties selector={"_id"=>"513dc72eff0961e88d000003", "address._id"=>"513dc72eff0961e88d000004"} update={"$set"=>{"address.street"=>"Griffenfeldsgade 11b", "address.full"=>"Griffenfeldsgade 11b, Copenhagen, Capital Region of Denmark, Capital Region of Denmark, Capital Region of Denmark, Capital Region of Denmark, Denmark, DK"}} flags=[] (0.1490ms)
   MOPED: 127.0.0.1:27017 UPDATE       database=fr_test collection=properties selector={"_id"=>"513dc72eff0961e88d000003", "address._id"=>"513dc72eff0961e88d000004"} update={"$set"=>{"address.postal_code"=>"2200", "address.full"=>"Griffenfeldsgade 11b, Copenhagen, Capital Region of Denmark, Capital Region of Denmark, Capital Region of Denmark, Capital Region of Denmark, 2200, Denmark, DK"}} flags=[] (0.1228ms)
   MOPED: 127.0.0.1:27017 UPDATE       database=fr_test collection=properties selector={"_id"=>"513dc72eff0961e88d000003"} update={"$set"=>{"position"=>[12.5549331, 55.68856839999999], "geocoded"=>true}} flags=[] (0.2398ms)
+Started GET "/posts" for 127.0.0.1 at 2013-03-16 10:46:55 +0100
+Processing by PostsController#index as HTML
+  Rendered posts/index.html.erb within layouts/application (8.9ms)
+Completed 500 Internal Server Error in 19ms
+Started GET "/posts" for 127.0.0.1 at 2013-03-16 10:46:55 +0100
+Processing by PostsController#index as HTML
+Completed 500 Internal Server Error in 7ms
+Started GET "/posts" for 127.0.0.1 at 2013-03-16 10:49:01 +0100
+Processing by PostsController#index as HTML
+  Rendered posts/index.html.erb within layouts/application (13.0ms)
+Completed 500 Internal Server Error in 21ms
+Started GET "/posts" for 127.0.0.1 at 2013-03-16 10:49:01 +0100
+Processing by PostsController#index as HTML
+Completed 500 Internal Server Error in 51ms
+Started GET "/posts" for 127.0.0.1 at 2013-03-16 10:52:08 +0100
+Processing by PostsController#index as HTML
+  Rendered posts/index.html.erb within layouts/application (14.4ms)
+Completed 500 Internal Server Error in 253ms
+Started GET "/posts" for 127.0.0.1 at 2013-03-16 10:52:08 +0100
+Processing by PostsController#index as HTML
+Completed 500 Internal Server Error in 6ms
+Started GET "/posts" for 127.0.0.1 at 2013-03-16 10:52:35 +0100
+Processing by PostsController#index as HTML
+  Rendered posts/index.html.erb within layouts/application (1.4ms)
+Completed 500 Internal Server Error in 13ms
+Started GET "/posts" for 127.0.0.1 at 2013-03-16 10:52:35 +0100
+Processing by PostsController#index as HTML
+Completed 500 Internal Server Error in 7ms
+Started GET "/posts" for 127.0.0.1 at 2013-03-16 10:53:37 +0100
+Processing by PostsController#index as HTML
+  Rendered posts/index.html.erb within layouts/application (1.4ms)
+Completed 500 Internal Server Error in 10ms
+Started GET "/posts" for 127.0.0.1 at 2013-03-16 10:53:37 +0100
+Processing by PostsController#index as HTML
+Completed 500 Internal Server Error in 51ms
+Started GET "/posts" for 127.0.0.1 at 2013-03-16 10:54:34 +0100
+Processing by PostsController#index as HTML
+  Rendered posts/index.html.erb within layouts/application (1.8ms)
+Completed 500 Internal Server Error in 13ms
+Started GET "/posts" for 127.0.0.1 at 2013-03-16 10:54:34 +0100
+Processing by PostsController#index as HTML
+Completed 500 Internal Server Error in 51ms
+Started GET "/posts" for 127.0.0.1 at 2013-03-16 10:54:51 +0100
+Processing by PostsController#index as HTML
+  Rendered posts/index.html.erb within layouts/application (2.4ms)
+Completed 200 OK in 15ms (Views: 14.2ms)
+Started GET "/posts" for 127.0.0.1 at 2013-03-16 10:54:51 +0100
+Processing by PostsController#index as HTML
+Completed 200 OK in 2ms (Views: 1.6ms)
+Started GET "/posts" for 127.0.0.1 at 2013-03-16 10:55:06 +0100
+Processing by PostsController#index as HTML
+  Rendered posts/index.html.erb within layouts/application (1.8ms)
+Completed 500 Internal Server Error in 13ms
+Started GET "/posts" for 127.0.0.1 at 2013-03-16 10:55:06 +0100
+Processing by PostsController#index as HTML
+Completed 500 Internal Server Error in 51ms
+Started GET "/posts" for 127.0.0.1 at 2013-03-16 10:55:42 +0100
+Processing by PostsController#index as HTML
+Completed 500 Internal Server Error in 2ms
+Started GET "/posts" for 127.0.0.1 at 2013-03-16 10:55:42 +0100
+Processing by PostsController#index as HTML
+Completed 500 Internal Server Error in 1ms
+Started GET "/posts" for 127.0.0.1 at 2013-03-16 11:00:04 +0100
+Processing by PostsController#index as HTML
+  Rendered posts/index.html.erb within layouts/application (1.7ms)
+Completed 200 OK in 14ms (Views: 13.8ms)
+Started GET "/posts" for 127.0.0.1 at 2013-03-16 11:00:04 +0100
+Processing by PostsController#index as HTML
+Completed 200 OK in 2ms (Views: 1.8ms)
+Started GET "/posts" for 127.0.0.1 at 2013-03-16 11:00:20 +0100
+Processing by PostsController#index as HTML
+  Rendered posts/index.html.erb within layouts/application (62.7ms)
+Completed 500 Internal Server Error in 70ms
+Started GET "/posts" for 127.0.0.1 at 2013-03-16 11:00:20 +0100
+Processing by PostsController#index as HTML
+Completed 500 Internal Server Error in 11ms
+Started GET "/posts" for 127.0.0.1 at 2013-03-16 11:00:30 +0100
+Processing by PostsController#index as HTML
+  Rendered posts/index.html.erb within layouts/application (15.3ms)
+Completed 500 Internal Server Error in 23ms
+Started GET "/posts" for 127.0.0.1 at 2013-03-16 11:00:30 +0100
+Processing by PostsController#index as HTML
+Completed 500 Internal Server Error in 12ms
+Started GET "/posts" for 127.0.0.1 at 2013-03-16 11:00:50 +0100
+Processing by PostsController#index as HTML
+  Rendered posts/index.html.erb within layouts/application (6.6ms)
+Completed 200 OK in 17ms (Views: 16.2ms)
+Started GET "/posts" for 127.0.0.1 at 2013-03-16 11:00:50 +0100
+Processing by PostsController#index as HTML
+Completed 200 OK in 7ms (Views: 6.7ms)
+Started GET "/posts" for 127.0.0.1 at 2013-03-16 11:01:45 +0100
+Processing by PostsController#index as HTML
+  Rendered posts/index.html.erb within layouts/application (1.5ms)
+Completed 200 OK in 11ms (Views: 10.9ms)
+Started GET "/posts" for 127.0.0.1 at 2013-03-16 11:01:45 +0100
+Processing by PostsController#index as HTML
+Completed 200 OK in 2ms (Views: 1.8ms)
+Started GET "/posts" for 127.0.0.1 at 2013-03-16 11:02:09 +0100
+Processing by PostsController#index as HTML
+  Rendered posts/index.html.erb within layouts/application (1.8ms)
+Completed 200 OK in 14ms (Views: 13.9ms)
+Started GET "/posts" for 127.0.0.1 at 2013-03-16 11:02:09 +0100
+Processing by PostsController#index as HTML
+Completed 200 OK in 2ms (Views: 1.8ms)
+Started GET "/posts" for 127.0.0.1 at 2013-03-16 12:09:07 +0100
+Processing by PostsController#index as HTML
+  Rendered posts/index.html.erb within layouts/application (2.0ms)
+Completed 200 OK in 15ms (Views: 14.7ms)
+Started GET "/posts" for 127.0.0.1 at 2013-03-16 12:09:07 +0100
+Processing by PostsController#index as HTML
+Completed 200 OK in 3ms (Views: 3.0ms)

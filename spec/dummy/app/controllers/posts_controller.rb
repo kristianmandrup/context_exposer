@@ -4,7 +4,7 @@ class PostsController < ApplicationController
   exposed(:post)  { posts.first }
   exposed(:posts) { ['Post 1', 'Post 2'] }
 
-  def show    
+  def show   
   end
 
   def index

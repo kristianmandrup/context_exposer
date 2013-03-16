@@ -33,6 +33,8 @@ Spork.prefork do
   require "capybara/rails"
   Capybara.default_driver   = :rack_test
 
+  include Rails.application.routes.url_helpers
+
   # Load support files
   Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 
@@ -41,6 +43,8 @@ Spork.prefork do
     # methods or matchers
     require 'rspec/expectations'
     config.include RSpec::Matchers
+
+    config.include RSpec::Rails::RequestExampleGroup, type: :feature
 
     # config.include FactoryGirl::Syntax::Methods
 

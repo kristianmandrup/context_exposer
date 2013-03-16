@@ -1,5 +1,5 @@
 Dummy::Application.routes.draw do
-  resources :posts, only: [:show, :index]
+  resources :posts #, only: [:show, :index]
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

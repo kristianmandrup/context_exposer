@@ -1,17 +1,20 @@
+require "context_exposer/integrations"
+
 module ContextExposer::BaseController
   extend ActiveSupport::Concern
+  include ContextExposer::Integrations::Base
 
   included do
     # before_filter :configure_exposed_context
     set_callback :process_action, :before, :configure_exposed_context
 
-    expose_context :context    
+    expose_context :ctx
   end
 
-  def view_context    
-    @view_context ||= build_view_context
+  def view_ctx
+    @view_ctx ||= build_view_ctx
   end
-  alias_method :context, :view_context
+  alias_method :ctx, :view_ctx
 
   module ClassMethods
     def exposed name, &block
@@ -19,30 +22,14 @@ module ContextExposer::BaseController
       exposure_storage[name.to_sym] = block
     end
 
-    # expose all exposures exposed by decent_exposure to context
-    def context_expose_decently options = {}
-      transfer_keys = _exposures.keys
-      except = (options[:except] || {}).map(&:to_sym)
-      only = (options[:only] || {}).map(&:to_sym)
-
-      transfer_keys = transfer_keys - except
-
-      unless only.empty?
-        transfer_keys.select {|k| only.include? k.to_sym } 
-      end
-
-      transfer_keys.each do |exposure|
-        exposed exposure do
-          send(exposure)
-        end
+    def view_ctx_class name
+      define_method :view_ctx_class do
+        @view_ctx_class ||= name.kind_of?(Class) ? name : name.to_s.camelize.constantize
       end
     end
-    alias_method :expose_decently, :context_expose_decently 
 
-    def view_context_class name
-      define_method :view_context_class do
-        @view_context_class ||= name.kind_of?(Class) ? name : name.to_s.camelize.constantize
-      end
+    def integrate_with name
+      self.send :include, "ContextExposer::Integrations::With#{name.to_s.camelize}".constantize
     end
 
     protected
@@ -81,7 +68,7 @@ module ContextExposer::BaseController
     exposed_methods = clazz.send(:exposure_hash)[clazz.to_s] || []
     exposed_methods.each do |name, procedure|
       this = self
-      view_context.send :define_singleton_method, name do 
+      view_ctx.send :define_singleton_method, name do 
         this.instance_eval(&procedure)
       end
     end
@@ -96,11 +83,11 @@ module ContextExposer::BaseController
 
   # returns a ViewContext object 
   # view helpers can be exposed as singleton methods, dynamically be attached (see below)
-  def build_view_context
-    view_context_class.new self
+  def build_view_ctx
+    view_ctx_class.new self
   end
 
-  def view_context_class
-    @view_context_class ||= ContextExposer::ViewContext
+  def view_ctx_class
+    @view_ctx_class ||= ContextExposer::ViewContext
   end
 end
