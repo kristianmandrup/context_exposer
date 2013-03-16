@@ -28,8 +28,15 @@ module ContextExposer::BaseController
       end
     end
 
-    def integrate_with name
-      self.send :include, "ContextExposer::Integrations::With#{name.to_s.camelize}".constantize
+    def integrate_with *names
+      names.flatten.compact.each do |name|
+        self.send :include, "ContextExposer::Integrations::With#{name.to_s.camelize}".constantize
+      end
+    end
+    alias_method :integrates_with, :integrate_with
+
+    def context_expose name, options = {}
+      send "context_expose_#{name}", options
     end
 
     protected

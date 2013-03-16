@@ -164,13 +164,27 @@ You can use the class macro `integrate_with(name)` to integrate with either:
 * decorates_before_rendering - `integrate_with :decorates_before`
 * instance vars - `integrate_with :instance_vars`
 
-In case you use the usual (default) Rails pattern of passing instance variables, you can slowly migrate to exposing via `ctx` object, by adding a simple macro `context_expose_instance_vars` to your controller.
+Note: You can even integrate with multiple startegies
 
-For decorated instance variables (see `decorates_before_rendering` gem), similarly use `context_expose_decorated_instance_vars`.
+`integrate_with :decent_exposure, :instance_vars`
 
-All of these `context_expose_xxxx` methods can optionally take an `:except` or `:only` option with a list of keys, similar to a `before_filter`.
+You can also specify your integrations directly as part of your `context_exposer` call.
 
-The method `context_expose_decorated_instance_vars` can additionally take a `:for`option of either `:collection` or `:non_collection` to limit the type of instance vars exposed.
+`context_exposer :base, with: :decent_exposure`
+
+In case you use the usual (default) Rails pattern of passing instance variables, you can slowly migrate to exposing via `ctx` object, by adding a simple macro `context_expose :instance_vars` to your controller.
+
+For decorated instance variables (see `decorates_before_rendering` gem), similarly use `context_expose :decorated_instance_vars`.
+
+All of these `context_expose :xxxx` methods can optionally take an `:except` or `:only` option with a list of keys, similar to a `before_filter`.
+
+The method `context_expose :decorated_instance_vars` can additionally take a `:for`option of either `:collection` or `:non_collection` to limit the type of instance vars exposed.
+
+`context_expose` integration
+
+* :instance_vars
+* :decorated_instance_vars
+* :decently
 
 Here is a full example demonstrating integration with `decent_exposure`.
 
@@ -179,18 +193,16 @@ Here is a full example demonstrating integration with `decent_exposure`.
 # auto-included in ActionController::Base
 
 class PostsController < ActionController::Base
-  include ContextExposer::BaseController
+  # make context_expose_decently method available
+  context_exposer :base, with :decent_exposure
 
   expose(:posts)  { Post.all.order(:created_at, :asc) }
   expose(:post)   { Post.first}
   expose(:postal) { '1234' }
 
-  # make context_expose_decently method available
-  integrate_with :decent_exposure
-
   # mirror all methods exposed via #expose on #ctx object 
   # except for 'postal' method
-  context_expose_decently except: 'postal'
+  context_expose :decently except: 'postal'
 end
 ```
 

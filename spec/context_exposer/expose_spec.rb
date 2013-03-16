@@ -13,7 +13,7 @@ class MyController < ActionController::Base
 
   integrate_with :decent_exposure
 
-  expose_decently except: %w{hello}
+  context_expose :decently, except: %w{hello}
 
   def show
     configure_exposed_context
@@ -23,7 +23,7 @@ class MyController < ActionController::Base
 end
 
 class MyCoolController < ActionController::Base
-  include ContextExposer::BaseController
+  context_exposer :base
   
   exposed(:coolness) { "MegaCool" }
 
