@@ -214,6 +214,16 @@ HAML view example
   %h2 = post.name
 ```
 
+## Decorates before rendering
+
+A patch for the `decorates_before_render` gem is currently made available.
+
+`ContextExposer.patch :decorates_before_render`
+
+Use this in an initializer. This way, decorates_before_render should try to decorate all your exposed variables before rendering, whether your view context is exposed as instance vars, methods or on the `ctx` object ;)
+
+Note: This is still an experimental feature.
+
 ## Testing
 
 The tests have been written in rspec 2 and capybara. 
