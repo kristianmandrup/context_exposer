@@ -156,10 +156,14 @@ This simplifies the above `PostsController` example to this:
 class PostsController < ActionController::Base
   # alternatively: context_exposer :resource
   include ContextExposer::ResourceController
+
+  expose_resources :all
 end
 ```
 
-`ResourceController`  uses the following internal logic for its default functionality. You can override these methods to customize your behavior as needed.
+The macro `expose_resources` optionally takes a list of the types of resource you want to expose. Valid types are `:one`, `:many` and `:list` respectively (for fx: `post`, `posts` and `posts_list`).
+
+`ContextExposer::ResourceController`  uses the following internal logic for its default functionality. You can override these methods to customize your behavior as needed.
 
 ```ruby
 module ContextExposer::ResourceController
@@ -179,6 +183,28 @@ module ContextExposer::ResourceController
     self.class._the_resource.all
   end
 ```
+
+Tip: You can create reusable module and then include your custom ResourceController.
+
+```ruby
+module NamedResourceController
+  extend ActiveSupport::Concern
+  include ContextExposer::ResourceController
+
+  protected
+
+  def resource_id
+    params[:name]
+  end
+end
+```
+
+```ruby
+class PostsController < ActionController::Base
+  include NamedResourceController
+end
+
+Tip: If you put your module inside the `ContextExposer` namespace, you can even use the `context_exposer` macro ;)
 
 ## Integrations with other exposure gems and patterns
 

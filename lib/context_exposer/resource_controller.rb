@@ -3,12 +3,34 @@ module ContextExposer::ResourceController
   include ContextExposer::BaseController
 
   included do
-    _exposing(_normalized_resource_name.singularize)  { find_single_resource    }
-    _exposing(_normalized_resource_name.pluralize)    { find_all_resources      }
-    _exposing(_normalized_resource_list)              { find_all_resources.to_a }
+    expose_resources
   end
 
   protected
+
+  module ClassMethods
+    def expose_resources *types
+      types = types.flatten
+      types = types.empty? ? [:all] : types
+
+      unless expose_resource_method? :one, types
+        _exposing(_normalized_resource_name.singularize)  { find_single_resource    }
+      end
+
+      unless expose_resource_method? :many, types
+        _exposing(_normalized_resource_name.pluralize)    { find_all_resources      }
+      end
+
+      unless expose_resource_method? :list, types
+        _exposing(_normalized_resource_list)              { find_all_resources.to_a }
+      end
+    end    
+
+    def expose_resource_method? type, types
+      ([type, :all] & types).empty?
+    end
+  end  
+
 
   def resource_id
     params[:id]

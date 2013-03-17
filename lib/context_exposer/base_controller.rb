@@ -18,12 +18,11 @@ module ContextExposer::BaseController
 
   module ClassMethods
     def exposed name, options = {}, &block
-      # puts "store: #{name} in hash storage for class #{self}"
       _exposure_storage[name.to_sym] = {options: options, proc: block}
     end
 
-    def expose_cached name, &block
-      exposed name, cached: true, &block
+    def expose_cached name, options = {}, &block
+      exposed name, options.merge(cached: true), &block
     end
 
     def view_ctx_class name
@@ -42,6 +41,10 @@ module ContextExposer::BaseController
     def context_expose name, options = {}
       send "context_expose_#{name}", options
     end
+
+    def _exposure_storage
+      _exposure_hash[self.to_s] ||= {}
+    end    
 
     protected
 
@@ -63,13 +66,9 @@ module ContextExposer::BaseController
       @_exposed_view_context == true
     end
 
-    def _exposure_storage
-      _exposure_hash[self.to_s] ||= {}
-    end
-
     def _exposure_hash
       @_exposure_hash ||= {}
-    end
+    end    
   end
 
   # must be called after Controller is instantiated
@@ -78,19 +77,8 @@ module ContextExposer::BaseController
     clazz = self.class
     exposed_methods = clazz.send(:_exposure_hash)[clazz.to_s] || []
     exposed_methods.each do |name, obj|
-      this = self
-      options = obj[:options]
-      proc = obj[:proc]
-      inst_var_name = "@#{name}"
-      view_ctx.send :define_singleton_method, name do
-
-        val = this.instance_eval(&proc)
-        if options[:cached]
-          set_instance_variable(inst_var_name, val) unless instance_variable(inst_var_name)
-        else
-          val
-        end             
-      end
+      options = obj[:options] || {}
+      options[:cached] ? _add_cached_ctx_method(obj, name) : _add_ctx_method(obj, name)
     end
     @configured_exposed_context = true
   end
@@ -100,6 +88,32 @@ module ContextExposer::BaseController
   end
 
   protected
+
+  def _add_ctx_method obj, name
+    this = self    
+    proc = obj[:proc]
+    inst_var_name = "@#{name}"
+
+    view_ctx.send :define_singleton_method, name do
+      this.instance_eval(&proc)
+    end
+  end
+
+  def _add_cached_ctx_method obj, name
+    this = self
+    options = obj[:options]
+    proc = obj[:proc]
+    inst_var_name = "@#{name}"
+
+    view_ctx.send :define_singleton_method, name do
+      old_val = instance_variable_get inst_var_name
+      return old_val if old_val
+
+      val = this.instance_eval(&proc)
+      instance_variable_set inst_var_name, val
+      val
+    end
+  end
 
   # returns a ViewContext object 
   # view helpers can be exposed as singleton methods, dynamically be attached (see below)

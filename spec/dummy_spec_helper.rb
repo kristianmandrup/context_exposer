@@ -13,6 +13,11 @@ Spork.prefork do
   require 'rails'
   require 'spork'
   
+  require "rspec"
+
+  require 'decent_exposure'
+  require 'decorates_before_rendering'
+
   # require 'factory_girl'
   
   # Configure Rails Envinronment
@@ -21,6 +26,7 @@ Spork.prefork do
   # Load support files
   Dir["#{File.dirname(__FILE__)}/support/models/**/*.rb"].each { |f| require f }
   Dir["#{File.dirname(__FILE__)}/support/models/*.rb"].each { |f| require f }  
+  Dir["#{File.dirname(__FILE__)}/support/decorators/*.rb"].each { |f| require f }  
 
   require File.expand_path("../dummy/config/environment.rb",  __FILE__)
 

@@ -1,4 +1,4 @@
-module DecoratesBeforeRendering
+module DecoratesBeforeRendering  
   class FindModelError < StandardError; end
   class DecoratorError < StandardError; end
 
@@ -16,37 +16,66 @@ module DecoratesBeforeRendering
   end
 
   def __handle_decorate_error_ e 
-    logger.warn 'decorates_before_render: auto_decorate error: #{e}'
+    # puts "Error: #{e}"
+
+    if defined?(::Rails) && (Rails.respond_to? :logger)
+      Rails.logger.warn 'decorates_before_render: auto_decorate error: #{e}'
+    end
   end
 
   def __exposed_ones_
-    return [] unless respond_to? :_exposures
-    @__exposed_ones_ ||= _exposures.keys
+    return [] unless self.class.respond_to? :_exposures
+    @__exposed_ones_ ||= self.class._exposures.keys
   end
 
   def __ctx_exposed_ones_
-    return [] unless respond_to? :_exposure_hash      
-    @__ctx_exposed_ones_ ||= _exposure_hash.keys
+    return [] unless self.class.respond_to? :_exposure_storage
+    @__ctx_exposed_ones_ ||= self.class._exposure_storage.keys
   end
 
   def __decorate_exposed_ones_
     __exposed_ones_.each do |name|
+      ivar_name = "@#{name}"
       obj = send(name)
-      __attempt_to_decorate_(obj)
+      decorated = __attempt_to_decorate_(obj)
+
+      decorated = case objs
+      when Array
+        __attempt_to_decorate_list_ objs        
+      else
+        __attempt_to_decorate_ objs
+      end
+
+      send(:instance_variable_set, ivar_name, decorated)  # if decorated
     end
   end
 
   def __decorate_ctx_exposed_ones_
     __ctx_exposed_ones_.each do |name|
-      obj = ctx.send(name)
-      __attempt_to_decorate_(obj)
+      ivar_name = "@#{name}"
+      objs = ctx.send(name)
+
+      decorated = case objs
+      when Array
+        __attempt_to_decorate_list_ objs        
+      else
+        __attempt_to_decorate_ objs
+      end
+
+      ctx.send(:instance_variable_set, ivar_name, decorated) # if decorated
     end
+  end
+
+  def __attempt_to_decorate_list_ objs
+    [objs].flatten.compact.map do |obj|
+      __attempt_to_decorate_(obj)      
+    end    
   end
 
   def __attempt_to_decorate_ obj
     if obj
       src = __src_for__(obj)
-      decorator = __decorator_for__(src)
+      decorator = __normalized_decorator_for__(src)
       __do_decoration_ decorator, obj
     end
   end    
@@ -54,7 +83,7 @@ module DecoratesBeforeRendering
   def __do_decoration_ decorator, obj
     return if !decorator || !obj
     __validate_decorator!(decorator)
-    decorator.decorate(obj) 
+    decorator.decorate(obj)
   end
 
 
@@ -91,8 +120,8 @@ module DecoratesBeforeRendering
   end    
 
   def __decorator_for__(obj)
-    return source.decorator(self) if source.respond_to? :decorator
-      __decorator_name_for__(source).constantize
+    return obj.decorator(self) if obj.respond_to? :decorator
+      __decorator_name_for__(obj).constantize
   rescue FindModelError => e
     nil
   end
@@ -102,7 +131,7 @@ module DecoratesBeforeRendering
   end
 
   def __model_name_for__(obj)
-    return source.model_name if obj.respond_to?(:model_name)
+    return obj.model_name if obj.respond_to?(:model_name)
     raise FindModelError, "#{obj} does not have an associated model"
   end  
 

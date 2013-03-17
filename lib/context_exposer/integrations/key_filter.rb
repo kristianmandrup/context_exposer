@@ -10,7 +10,6 @@ module ContextExposer
 
       # expose all exposures exposed by decent_exposure to context
       def filter
-        puts "keys: #{keys} - #{except}"
         the_keys = keys - except
         only.empty? ? the_keys : the_keys.select {|k| only.include? k.to_sym } 
       end

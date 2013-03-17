@@ -1,16 +1,26 @@
 require 'spec_helper'
 
+ContextExposer.patch :decorates_before_rendering
+
 class PostsController < ActionController::Base
-  include ContextExposer::ResourceController
+  context_exposer :cached_resource
+  decorates_before_render
+
+  expose_resources :all
   
   def show
     configure_exposed_context
+    render
   end
 
   def index
   end
 
   protected
+
+  def render *args
+    __auto_decorate_exposed_ones_
+  end
 
   def params
     {id: 1}
@@ -47,7 +57,8 @@ describe ContextExposer::ResourceController do
       end
 
       context 'context' do
-        subject { controller.ctx }
+        subject   { ctx }
+        let(:ctx) { controller.ctx }
 
         it "is an instance of ContextExposer::ViewContext" do
           expect(subject).to be_a ContextExposer::ViewContext
@@ -65,17 +76,40 @@ describe ContextExposer::ResourceController do
           expect(subject).to respond_to(:posts_list)
         end      
 
-        it "calling method :post returns 'My 1st post' " do
-          expect(subject.post.name).to eq @post1.name
-        end      
+        context 'post' do
+          subject    { post }
+          let(:post) { ctx.post }
 
-        it "calling method :posts returns all posts " do
-          expect(subject.posts).to eq [@post1, @post2]
-        end      
+          it "calling method :post returns 'My 1st post' " do
+            expect(subject).to be_a PostDecorator
+          end      
 
-        it "calling method :posts_list returns all posts " do
-          expect(subject.posts_list).to eq [@post1, @post2]
-        end      
+          it "calling method :post returns 'My 1st post' " do
+            expect(subject.name).to eq @post1.name
+          end      
+        end
+
+        context 'posts' do
+          subject     { posts }
+          let(:posts) { ctx.posts }
+
+          it "calling method :posts returns all posts " do
+            expect(subject).to eq [@post1, @post2]
+          end    
+        end
+
+        context 'posts_list' do
+          subject          { posts_list }
+          let(:posts_list) { ctx.posts_list }
+
+          it "calling method :posts_list returns all posts " do
+            expect(subject).to eq [@post1, @post2]
+          end      
+
+          it "first posts is a PostDecorator " do
+            expect(subject.first).to be_a PostDecorator
+          end
+        end
       end
     end
   end
