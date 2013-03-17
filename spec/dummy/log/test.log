@@ -2369,3 +2369,20 @@ Started GET "/items/1" for 127.0.0.1 at 2013-03-17 12:47:28 +0100
 Processing by ItemsController#show as HTML
   Parameters: {"id"=>"1"}
 Completed 200 OK in 3ms (Views: 2.9ms)
+Started GET "/items" for 127.0.0.1 at 2013-03-17 13:43:18 +0100
+Processing by ItemsController#index as HTML
+Completed 500 Internal Server Error in 1ms
+Started GET "/items/1" for 127.0.0.1 at 2013-03-17 13:43:18 +0100
+Processing by ItemsController#show as HTML
+  Parameters: {"id"=>"1"}
+Completed 500 Internal Server Error in 1ms
+Started GET "/items" for 127.0.0.1 at 2013-03-17 13:43:38 +0100
+Processing by ItemsController#index as HTML
+decorates_before_render: auto_decorate error: #{e}
+  Rendered items/index.html.erb within layouts/application (2.3ms)
+Completed 200 OK in 16ms (Views: 15.1ms)
+Started GET "/items/1" for 127.0.0.1 at 2013-03-17 13:43:39 +0100
+Processing by ItemsController#show as HTML
+  Parameters: {"id"=>"1"}
+decorates_before_render: auto_decorate error: #{e}
+Completed 200 OK in 4ms (Views: 3.5ms)

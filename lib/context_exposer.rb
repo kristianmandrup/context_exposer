@@ -3,7 +3,7 @@ require "context_exposer/version"
 module ContextExposer
   def self.patch name
     case name.to_sym
-    when :decorates_before_render
+    when :decorates_before_rendering
       require "context_exposer/patch/#{name}"
     else
       raise ArgumentError, "No patch defined for: #{name}. Try one of #{patches}"
@@ -11,7 +11,7 @@ module ContextExposer
   end
 
   def self.patches
-    [:decorates_before_render]
+    [:decorates_before_rendering]
   end
 end
 

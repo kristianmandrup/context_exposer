@@ -242,11 +242,11 @@ HAML view example
 
 A patch for the `decorates_before_render` gem is currently made available.
 
-`ContextExposer.patch :decorates_before_render`
+`ContextExposer.patch :decorates_before_rendering`
 
-Use this in an initializer. This way, decorates_before_render should try to decorate all your exposed variables before rendering, whether your view context is exposed as instance vars, methods or on the `ctx` object of the view ;)
+You typically use this in a Rails initializer. This way, `decorates_before_rendering` should try to decorate all your exposed variables before rendering, whether your view context is exposed as instance vars, methods or on the `ctx` object of the view ;)
 
-Note: This is still an experimental feature.
+Note: You can now also use the macro `decorates_before_render` to include the `DecoratesBeforeRendering` module.
 
 ### Auto-finding a decorator
 
@@ -255,9 +255,24 @@ For the patched version of `decorates_before_render` to work, your exposed and c
 Example:
 
 ```ruby
+class PostsController < ActionController::Base
+  decorates_before_render
+  context_exposer :base, with :decent_exposure
+
+  expose_cached(:first_post) { Post.first } 
+
+  protected
+
+  def admin?
+    @admin ||= current_user.admin?
+  end
+end
+```
+
+```ruby
 class Post < ActiveRecord::Base
   def decorator contrl
-    contrl.admin? 'Admin::PostDecorator' : model_name      
+    contrl.send(:admin?) ? 'Admin::PostDecorator' : model_name      
   end
 end
 
