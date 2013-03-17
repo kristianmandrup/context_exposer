@@ -17,9 +17,13 @@ module ContextExposer::BaseController
   alias_method :ctx, :view_ctx
 
   module ClassMethods
-    def exposed name, &block
+    def exposed name, options = {}, &block
       # puts "store: #{name} in hash storage for class #{self}"
-      _exposure_storage[name.to_sym] = block
+      _exposure_storage[name.to_sym] = {options: options, proc: block}
+    end
+
+    def expose_cached name, &block
+      exposed name, cached: true, &block
     end
 
     def view_ctx_class name
@@ -73,10 +77,19 @@ module ContextExposer::BaseController
     return if configured_exposed_context?
     clazz = self.class
     exposed_methods = clazz.send(:_exposure_hash)[clazz.to_s] || []
-    exposed_methods.each do |name, procedure|
+    exposed_methods.each do |name, obj|
       this = self
-      view_ctx.send :define_singleton_method, name do 
-        this.instance_eval(&procedure)
+      options = obj[:options]
+      proc = obj[:proc]
+      inst_var_name = "@#{name}"
+      view_ctx.send :define_singleton_method, name do
+
+        val = this.instance_eval(&proc)
+        if options[:cached] ?
+          set_instance_variable(inst_var_name, val) unless instance_variable(inst_var_name)
+        else
+          val
+        end             
       end
     end
     @configured_exposed_context = true

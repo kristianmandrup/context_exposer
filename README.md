@@ -54,6 +54,19 @@ HAML view example
   %h2 = post.name
 ```
 
+You can also have the exposed methods automatically cache the result in an instance variable, by using the `expose_cached` variant.
+
+```ruby
+class PostsController < ActionController::Base
+  include ContextExposer::BaseController
+  
+  expose_cached(:post)  { Post.find params[:id] }
+  expose_cached(:posts) { Post.find params[:id] }
+end
+```
+
+This is especially useful if used in combination with `decorates_before_rendering`, which only works on cached objects.
+
 ## Macros
 
 You can also choose to use the class macros made available on `ActionController::Base` as Rails loads.
@@ -220,9 +233,26 @@ A patch for the `decorates_before_render` gem is currently made available.
 
 `ContextExposer.patch :decorates_before_render`
 
-Use this in an initializer. This way, decorates_before_render should try to decorate all your exposed variables before rendering, whether your view context is exposed as instance vars, methods or on the `ctx` object ;)
+Use this in an initializer. This way, decorates_before_render should try to decorate all your exposed variables before rendering, whether your view context is exposed as instance vars, methods or on the `ctx` object of the view ;)
 
 Note: This is still an experimental feature.
+
+### Auto-finding a decorator
+
+For the patched version of `decorates_before_render` to work, your exposed and cached object must either have a `model_name` method that returns the name of the model name to be used to calculate the decorator name to use, or alternatively (and with higher precedence if present), a `decorator` method that takes the controller (self) as an argument and returns the full name of the decorator to use ;)
+
+Example:
+
+```ruby
+class Post < ActiveRecord::Base
+  def decorator contrl
+    contrl.admin? 'Admin::PostDecorator' : model_name      
+  end
+end
+
+### Auto-detection Error handling
+
+If the auto-decoration can't find a decorator for an exposed variable (or method), it will either ignore it (not decorate it) or call `__handle_decorate_error_(error)` which by default will log a Rails warning. Override this error handler as it suits you.
 
 ## Testing
 
