@@ -85,7 +85,7 @@ module ContextExposer::BaseController
       view_ctx.send :define_singleton_method, name do
 
         val = this.instance_eval(&proc)
-        if options[:cached] ?
+        if options[:cached]
           set_instance_variable(inst_var_name, val) unless instance_variable(inst_var_name)
         else
           val
