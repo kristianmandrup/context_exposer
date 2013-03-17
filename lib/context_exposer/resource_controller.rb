@@ -3,14 +3,9 @@ module ContextExposer::ResourceController
   include ContextExposer::BaseController
 
   included do
-    puts "included: #{_normalized_resource_name}"
-
-    exposed(_normalized_resource_name.singularize) do
-      find_single_resource
-    end
-
-    exposed(_normalized_resource_name.pluralize)    { find_all_resources }
-    exposed(_normalized_resource_list)              { find_all_resources.to_a }
+    _exposing(_normalized_resource_name.singularize)  { find_single_resource    }
+    _exposing(_normalized_resource_name.pluralize)    { find_all_resources      }
+    _exposing(_normalized_resource_list)              { find_all_resources.to_a }
   end
 
   protected
@@ -28,6 +23,11 @@ module ContextExposer::ResourceController
   end
 
   module ClassMethods
+    # for use in ResourceController
+    def _exposing name, options = {}, &block
+      exposed name, options, &block
+    end
+    
     def _the_resource
       clazz_name = self.to_s.sub(/Controller$/, '').singularize
       clazz_name.constantize

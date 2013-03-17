@@ -1,33 +1,4 @@
-require 'context_exposer'
-# require 'rails'
-require 'action_controller'
-
-class Post
-  attr_accessor :name
-
-  def initialize name
-    @name = name
-    Post.add self
-  end
-
-  def self.find id
-    list.first
-  end
-
-  def self.all
-    Post.list
-  end
-
-  protected
-
-  def self.add post
-    list << post
-  end
-
-  def self.list
-    @list ||= []
-  end
-end
+require 'spec_helper'
 
 class PostsController < ActionController::Base
   include ContextExposer::ResourceController
@@ -90,12 +61,20 @@ describe ContextExposer::ResourceController do
           expect(subject).to respond_to(:posts)
         end      
 
+        it "defines a method :posts_list" do
+          expect(subject).to respond_to(:posts_list)
+        end      
+
         it "calling method :post returns 'My 1st post' " do
           expect(subject.post.name).to eq @post1.name
         end      
 
         it "calling method :posts returns all posts " do
           expect(subject.posts).to eq [@post1, @post2]
+        end      
+
+        it "calling method :posts_list returns all posts " do
+          expect(subject.posts_list).to eq [@post1, @post2]
         end      
       end
     end

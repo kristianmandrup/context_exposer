@@ -1,5 +1,4 @@
-require 'context_exposer'
-require 'action_controller'
+require 'spec_helper'
 
 class MyController < ActionController::Base
   include ContextExposer::BaseController

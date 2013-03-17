@@ -2285,3 +2285,87 @@ Completed 200 OK in 16ms (Views: 15.4ms)
 Started GET "/posts" for 127.0.0.1 at 2013-03-16 12:19:55 +0100
 Processing by PostsController#index as HTML
 Completed 200 OK in 2ms (Views: 1.8ms)
+Started GET "/posts" for 127.0.0.1 at 2013-03-17 12:27:42 +0100
+Processing by PostsController#index as HTML
+  Rendered posts/index.html.erb within layouts/application (3.3ms)
+Completed 200 OK in 17ms (Views: 16.1ms)
+Started GET "/posts" for 127.0.0.1 at 2013-03-17 12:28:06 +0100
+Processing by PostsController#index as HTML
+  Rendered posts/index.html.erb within layouts/application (1.5ms)
+Completed 200 OK in 12ms (Views: 11.1ms)
+Started GET "/posts" for 127.0.0.1 at 2013-03-17 12:28:41 +0100
+Processing by PostsController#index as HTML
+  Rendered posts/index.html.erb within layouts/application (1.5ms)
+Completed 200 OK in 11ms (Views: 11.0ms)
+Started GET "/posts" for 127.0.0.1 at 2013-03-17 12:29:32 +0100
+Processing by PostsController#index as HTML
+  Rendered posts/index.html.erb within layouts/application (1.5ms)
+Completed 200 OK in 12ms (Views: 11.1ms)
+Started GET "/posts/1" for 127.0.0.1 at 2013-03-17 12:29:32 +0100
+Processing by PostsController#show as HTML
+  Parameters: {"id"=>"1"}
+Completed 200 OK in 6ms (Views: 5.0ms)
+Started GET "/items" for 127.0.0.1 at 2013-03-17 12:29:53 +0100
+Processing by ItemsController#index as HTML
+  Rendered items/index.html.erb within layouts/application (70.3ms)
+Completed 500 Internal Server Error in 81ms
+Started GET "/items/1" for 127.0.0.1 at 2013-03-17 12:29:53 +0100
+Processing by ItemsController#show as HTML
+  Parameters: {"id"=>"1"}
+Completed 500 Internal Server Error in 11ms
+Started GET "/items" for 127.0.0.1 at 2013-03-17 12:42:56 +0100
+Processing by ItemsController#index as HTML
+  Rendered items/index.html.erb within layouts/application (11.7ms)
+Completed 500 Internal Server Error in 21ms
+Started GET "/items/1" for 127.0.0.1 at 2013-03-17 12:42:56 +0100
+Processing by ItemsController#show as HTML
+  Parameters: {"id"=>"1"}
+Completed 500 Internal Server Error in 10ms
+Started GET "/items" for 127.0.0.1 at 2013-03-17 12:44:17 +0100
+Processing by ItemsController#index as HTML
+  Rendered items/index.html.erb within layouts/application (13.8ms)
+Completed 500 Internal Server Error in 23ms
+Started GET "/items/1" for 127.0.0.1 at 2013-03-17 12:44:17 +0100
+Processing by ItemsController#show as HTML
+  Parameters: {"id"=>"1"}
+Completed 500 Internal Server Error in 10ms
+Started GET "/items" for 127.0.0.1 at 2013-03-17 12:45:00 +0100
+Processing by ItemsController#index as HTML
+  Rendered items/index.html.erb within layouts/application (11.2ms)
+Completed 500 Internal Server Error in 61ms
+Started GET "/items/1" for 127.0.0.1 at 2013-03-17 12:45:00 +0100
+Processing by ItemsController#show as HTML
+  Parameters: {"id"=>"1"}
+Completed 500 Internal Server Error in 27ms
+Started GET "/items" for 127.0.0.1 at 2013-03-17 12:45:17 +0100
+Processing by ItemsController#index as HTML
+  Rendered items/index.html.erb within layouts/application (4.3ms)
+Completed 500 Internal Server Error in 56ms
+Started GET "/items/1" for 127.0.0.1 at 2013-03-17 12:45:17 +0100
+Processing by ItemsController#show as HTML
+  Parameters: {"id"=>"1"}
+Completed 500 Internal Server Error in 10ms
+Started GET "/items" for 127.0.0.1 at 2013-03-17 12:45:30 +0100
+Processing by ItemsController#index as HTML
+  Rendered items/index.html.erb within layouts/application (4.6ms)
+Completed 500 Internal Server Error in 55ms
+Started GET "/items/1" for 127.0.0.1 at 2013-03-17 12:45:30 +0100
+Processing by ItemsController#show as HTML
+  Parameters: {"id"=>"1"}
+Completed 500 Internal Server Error in 9ms
+Started GET "/items" for 127.0.0.1 at 2013-03-17 12:47:05 +0100
+Processing by ItemsController#index as HTML
+  Rendered items/index.html.erb within layouts/application (4.5ms)
+Completed 500 Internal Server Error in 12ms
+Started GET "/items/1" for 127.0.0.1 at 2013-03-17 12:47:05 +0100
+Processing by ItemsController#show as HTML
+  Parameters: {"id"=>"1"}
+Completed 200 OK in 5ms (Views: 4.6ms)
+Started GET "/items" for 127.0.0.1 at 2013-03-17 12:47:28 +0100
+Processing by ItemsController#index as HTML
+  Rendered items/index.html.erb within layouts/application (1.9ms)
+Completed 200 OK in 54ms (Views: 53.9ms)
+Started GET "/items/1" for 127.0.0.1 at 2013-03-17 12:47:28 +0100
+Processing by ItemsController#show as HTML
+  Parameters: {"id"=>"1"}
+Completed 200 OK in 3ms (Views: 2.9ms)

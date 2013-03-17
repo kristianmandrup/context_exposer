@@ -91,8 +91,14 @@ class PostsController < ActionController::Base
   
   view_ctx_class :posts_view_context
 
-  exposed(:post)  { Post.find params[:id] }
-  exposed(:posts) { Post.all }
+  # One model instance
+  exposed(:post)        { Post.find params[:id] } 
+
+  # Relation (for further scoping or lazy load)
+  exposed(:posts)       { Post.all } 
+
+  # Array of model instances
+  exposed(:posts_list)  { Post.all.to_a } 
 end
 ```
 
@@ -138,12 +144,17 @@ This approach opens up many new exciting ways to slice and dice your logic in a 
 
 ### ResourceController
 
-The `ResourceController` automatically sets up the typical singular and plural-form resource helpers.
+The `ResourceController` automatically sets up the typical singular and plural-form resource helpers. For example for PostsController:
+
+* `post` - one Post instance
+* `posts` - Search Relatation (for lazy load or further scoping)
+* `posts_list` - Array of Post instances
 
 This simplifies the above `PostsController` example to this:
 
 ```ruby
 class PostsController < ActionController::Base
+  # alternatively: context_exposer :resource
   include ContextExposer::ResourceController
 end
 ```
@@ -177,11 +188,11 @@ You can use the class macro `integrate_with(name)` to integrate with either:
 * decorates_before_rendering - `integrate_with :decorates_before`
 * instance vars - `integrate_with :instance_vars`
 
-Note: You can even integrate with multiple startegies
+Note: You can even integrate with multiple strategies
 
 `integrate_with :decent_exposure, :instance_vars`
 
-You can also specify your integrations directly as part of your `context_exposer` call.
+You can also specify your integrations directly as part of your `context_exposer` call (recommended)
 
 `context_exposer :base, with: :decent_exposure`
 
