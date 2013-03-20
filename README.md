@@ -274,13 +274,11 @@ decorates_assigned :article, with: FancyArticleDecorator
 decorates_assigned :articles, with: PaginatingCollectionDecorator
 ```
 
-Since this functionality is very similar to fx `decent_exposure`, it can be used with `ctx` in a similar way. Simply use the `context_expose_assigned` macro.
+Since this functionality is very similar to fx `decent_exposure`, it can be used with `ctx` in a similar way. Simply use the `context_expose_assigned` like the `context_expose_decently` macro.
 
-`context_expose_assigned :post, :posts`
+`context_expose_assigned`
 
-In the near future there should be even better integration, so you don't have to specify the method names to expose all, just like for `context_expose_decently` ;)
-
-See [commit comment](https://github.com/haines/draper/commit/afa97bb401666f47ef380d7c9e8e94a8b472597d#commitcomment-2844631)
+`context_expose_assigned only: %w{post posts}
 
 ## Decorates before rendering
 

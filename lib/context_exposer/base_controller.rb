@@ -69,7 +69,9 @@ module ContextExposer::BaseController
     alias_method :integrates_with, :integrate_with
 
     def context_expose name, options = {}
-      send "context_expose_#{name}", options
+      meth_name = "context_expose_#{name}"
+      raise ArgumentError, "No such method #{meth_name}" unless respond_to? meth_name
+      send meth_name, options
     end
 
     def _exposure_storage
