@@ -12,6 +12,7 @@ The gem comes with integrations ready for easy migration or symbiosis with exist
 * exposing of instance variables (Rails default strategy)
 * decent_exposure gem (expose methods)
 * decorates_before_rendering gem (expose decorated instance vars)
+* draper
 
 For more on integration (and migration path) see below ;)
 
@@ -264,6 +265,23 @@ HAML view example
   %h2 = post.name
 ```
 
+## Draper
+
+The `draper` gem adds a `decorates_assigned` method since version *1.1* (see [pull request](https://github.com/drapergem/draper/pull/461)).
+
+```ruby
+decorates_assigned :article, with: FancyArticleDecorator
+decorates_assigned :articles, with: PaginatingCollectionDecorator
+```
+
+Since this functionality is very similar to fx `decent_exposure`, it can be used with `ctx` in a similar way. Simply use the `context_expose_assigned` macro.
+
+`context_expose_assigned :post, :posts`
+
+In the near future there should be even better integration, so you don't have to specify the method names to expose all, just like for `context_expose_decently` ;)
+
+See [commit comment](https://github.com/haines/draper/commit/afa97bb401666f47ef380d7c9e8e94a8b472597d#commitcomment-2844631)
+
 ## Decorates before rendering
 
 A patch for the `decorates_before_render` gem is currently made available.
@@ -305,6 +323,78 @@ end
 ### Auto-detection Error handling
 
 If the auto-decoration can't find a decorator for an exposed variable (or method), it will either ignore it (not decorate it) or call `__handle_decorate_error_(error)` which by default will log a Rails warning. Override this error handler as it suits you.
+
+## Globalizing the page context
+
+As you have the `ctx` object encapsulate all the view state in one place, you can simplify
+your partial calls to `render partial: 'my/partial/template', locals: {ctx: ctx}`.
+However, if you use nested partials it quickly feels repetitive...
+
+Which is why this pattern is now encapsulated in the view helper `render_ctx` which auto-populates the `:locals` hash with a local `page_context` variable that points to a `ContextExposer::PageContext.instance` which contains the `ctx` object :)
+
+Furthermore, a delegation of `ctx` to  `page_context.ctx` is defined so you can still access `ctx` directly from within the views.
+
+So you then only have to use the locals hash if you want to pass on variables not part of `ctx`.
+
+```ruby
+render_ctx partial: 'my/partial/template'
+```
+
+### Page object
+
+To further help in making page rendering decissions, a `ContextExposer::Page` instance is 
+created and populated on each request, which can contain the following data:
+
+`:name, :id, :action, :mode, :controller_name, :type, :resource`
+
+The Page instance will attempt to calculate the resource name from the `normalized_resource_name` method of the `ContextExposer::BaseController`. Override this method to calculate a custom resource name for the controller.
+
+The page name will normally be calculated by concatenating action, resource name and type, so a `PostController#show` action will have the default name `'show_post_item'`. Resource `type` is either `:list` or `:item` and will be attempted calculated using the action name and looking up in the `list_actions` and `item_actions` class methods on the controller.
+
+By default these methods will use the `base_list_actions` (index) and `base_item_actions` (show, new, edit). You can override/extend these conventions and provide your own `list_actions` and `item_actions` class methods for each controller. Macros are provided to generate these methods from a simple list.
+
+```ruby
+class Admin::BirdLocationController < ActionController::Base
+  # expose, decorate etc left out
+
+  # use macros to configure extra REST-like actions
+  list_actions :manage
+  item_actions :map
+
+  # custom page object config just before render
+  after_filter :set_page_mode
+
+  # manage many birds
+  def manage
+    Bird.all
+  end
+
+  # show a single bird location on the map
+  def map
+    Bird.find params[:id]
+  end
+
+  protected
+
+  def set_page_mode
+    ctx.page.mode = mode
+  end
+
+  # custom calculated page name using fx action_name method and params etc
+  def page_name
+    "#{action_name}_#{mode}"
+  end
+
+  # map, details or normal mode ?
+  def mode
+    params[:mode]
+  end
+
+  def self.normalized_resource_name
+    :bird
+  end
+end
+```
 
 ## Testing
 

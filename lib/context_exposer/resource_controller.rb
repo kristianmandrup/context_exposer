@@ -14,15 +14,15 @@ module ContextExposer::ResourceController
       types = types.empty? ? [:all] : types
 
       unless expose_resource_method? :one, types
-        _exposing(_normalized_resource_name.singularize)  { find_single_resource    }
+        _exposing(normalized_resource_name.singularize)  { find_single_resource    }
       end
 
       unless expose_resource_method? :many, types
-        _exposing(_normalized_resource_name.pluralize)    { find_all_resources      }
+        _exposing(normalized_resource_name.pluralize)    { find_all_resources      }
       end
 
       unless expose_resource_method? :list, types
-        _exposing(_normalized_resource_list)              { find_all_resources.to_a }
+        _exposing(normalized_resource_list)              { find_all_resources.to_a }
       end
     end    
 
@@ -57,12 +57,8 @@ module ContextExposer::ResourceController
       raise "Resource #{clazz_name} is not defined. #{e}"
     end
 
-    def _normalized_resource_list
-      _normalized_resource_name.singularize + '_list'
-    end
-
-    def _normalized_resource_name
-      self.to_s.demodulize.sub(/Controller$/, '').underscore
+    def normalized_resource_list
+      normalized_resource_name.singularize + '_list'
     end
   end
 end

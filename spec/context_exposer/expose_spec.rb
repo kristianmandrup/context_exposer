@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-class MyController < ActionController::Base
+class BirdController < ActionController::Base
   include ContextExposer::BaseController
   
   exposed(:bird) { "Bird" }
@@ -19,7 +19,15 @@ class MyController < ActionController::Base
     save_exposed_context
   end
 
+  def action_name
+    'show'
+  end
+
   protected
+
+  def self.resource_name
+    :bird
+  end
 end
 
 class MyCoolController < ActionController::Base
@@ -34,7 +42,15 @@ class MyCoolController < ActionController::Base
     save_exposed_context
   end
 
+  def action_name
+    'show'
+  end
+
   protected
+
+  def self.resource_name
+    "MyCool"
+  end
 
   def params; end  
 end
@@ -54,7 +70,7 @@ describe ContextExposer::BaseController do
   describe "controller" do
     subject { controller }
 
-    let(:controller) { MyController.new }
+    let(:controller) { BirdController.new }
 
     # run action post
     before :each do
@@ -124,11 +140,11 @@ describe ContextExposer::BaseController do
         let(:page) { page_context.page }
 
         it "has a name" do
-          expect(subject.name).to eq 'show_post'
+          expect(subject.name).to eq "show_bird_item"
         end              
 
         it "has a type" do
-          expect(subject.type).to eq 'show'
+          expect(subject.type).to eq nil
         end              
 
         it "has an action" do
@@ -143,7 +159,7 @@ describe ContextExposer::BaseController do
           subject { page.resource }
 
           it "has a name" do
-            expect(subject.name).to eq 'post'
+            expect(subject.name).to eq 'bird'
           end              
 
           it "has a type" do

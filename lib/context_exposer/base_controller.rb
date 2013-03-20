@@ -19,6 +19,10 @@ module ContextExposer::BaseController
   alias_method :ctx, :view_ctx
 
   module ClassMethods
+    def normalized_resource_name
+      self.to_s.demodulize.sub(/Controller$/, '').underscore.singularize
+    end
+
     def exposed name, options = {}, &block
       _exposure_storage[name.to_sym] = {options: options, proc: block}
     end
@@ -30,6 +34,30 @@ module ContextExposer::BaseController
     def view_ctx_class name
       define_method :view_ctx_class do
         @view_ctx_class ||= name.kind_of?(Class) ? name : name.to_s.camelize.constantize
+      end
+    end
+
+    def base_list_actions
+      [:index]
+    end
+
+    def base_item_actions
+      [:show, :new, :edit]
+    end
+
+    def list_actions *names
+      return if names.blank?
+      names = names.flatten.map(&:to_sym)
+      (class << self; end).define_method :list_actions do
+        names | base_list_actions
+      end
+    end
+
+    def item_actions *names
+      return if names.blank?
+      names = names.flatten.map(&:to_sym)
+      (class << self; end).define_method :item_actions do
+        names | base_item_actions
       end
     end
 
@@ -93,15 +121,47 @@ module ContextExposer::BaseController
     @page ||= build_page_obj
   end
 
+  # TODO: cleanup!
   def build_page_obj
     return @page if @page
     @page = ContextExposer::Page.instance
+    @page.clear!
     clazz = self.class
-    @page.resource.name = clazz._normalized_resource_name if clazz.respond_to? :_normalized_resource_name
-    @page.name = page_name if respond_to? :page_name
+
+    # single or list resource ?
+    @page.resource.type = calc_resource_type if calc_resource_type
+
+    # also attempts to auto-caluclate resource.type if not set
+    @page.resource.name = if clazz.respond_to?(:normalized_resource_name, true)
+      clazz.normalized_resource_name 
+    else
+      clazz.resource_name if clazz.respond_to?(:resource_name, true)
+    end
+
     @page.controller = self
+
+    @page.name = if respond_to?(:page_name, true)
+       page_name 
+    else
+      @page_name if @page_name
+    end
+
     @page
   end
+
+  def calc_resource_type
+    return @resource_type if @resource_type
+    clazz = self.class
+
+    if clazz.respond_to?(:list_actions, true) && !clazz.list_actions.blank?
+      resource_type = :list if clazz.list_actions[action_name.to_sym]
+    end
+
+    if !resource_type && clazz.respond_to?(:item_actions, true) && !clazz.item_actions.blank?
+      resource_type = :item if clazz.item_actions[action_name.to_sym] 
+    end
+    @resource_type = resource_type
+  end    
 
   def configured_exposed_context?
     @configured_exposed_context == true
