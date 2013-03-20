@@ -2,10 +2,14 @@ module DecoratesBeforeRendering
   class FindModelError < StandardError; end
   class DecoratorError < StandardError; end
 
-  def render *args
-    __auto_decorate_exposed_ones_
-    super(*args)
+  included do
+    after_filter :__auto_decorate_exposed_ones_
   end
+
+  # def render *args
+  #   __auto_decorate_exposed_ones_
+  #   super(*args)
+  # end
 
   def __auto_decorate_exposed_ones_
     __decorate_ivars__
@@ -17,27 +21,41 @@ module DecoratesBeforeRendering
 
   def __handle_decorate_error_ e 
     # puts "Error: #{e}"
-
     if defined?(::Rails) && (Rails.respond_to? :logger)
       Rails.logger.warn 'decorates_before_render: auto_decorate error: #{e}'
     end
   end
 
   def __exposed_ones_
-    return [] unless self.class.respond_to? :_exposures
-    @__exposed_ones_ ||= self.class._exposures.keys
+    return [] unless _has_exposures?
+    @__exposed_ones_ ||= _exposure_keys
+  end
+
+  def _exposure_keys
+    self.class._exposures.keys
+  end
+
+  def _has_exposures?
+    self.class.respond_to? :_exposures
   end
 
   def __ctx_exposed_ones_
-    return [] unless self.class.respond_to? :_exposure_storage
-    @__ctx_exposed_ones_ ||= self.class._exposure_storage.keys
+    return [] unless _has_exposure_storage?
+    @__ctx_exposed_ones_ ||= _cxt_exposed_keys
+  end
+
+  def _cxt_exposed_keys
+    self.class._exposure_storage.keys
+  end
+
+  def _has_exposure_storage?
+    self.class.respond_to? :_exposure_storage
   end
 
   def __decorate_exposed_ones_
     __exposed_ones_.each do |name|
       ivar_name = "@#{name}"
-      obj = send(name)
-      decorated = __attempt_to_decorate_(obj)
+      objs = send(name)
 
       decorated = case objs
       when Array
@@ -73,6 +91,7 @@ module DecoratesBeforeRendering
   end
 
   def __attempt_to_decorate_ obj
+    return obj if obj.respond_to?(:decorate)
     if obj
       src = __src_for__(obj)
       decorator = __normalized_decorator_for__(src)
@@ -81,6 +100,8 @@ module DecoratesBeforeRendering
   end    
 
   def __do_decoration_ decorator, obj
+    return obj if obj.respond_to?(:decorate)
+
     return if !decorator || !obj
     __validate_decorator!(decorator)
     decorator.decorate(obj)
@@ -136,16 +157,11 @@ module DecoratesBeforeRendering
   end  
 
   def __decorate_ivars__
+    return unless __has_decorates?
     __validate_decorates_present_
     return if __decorates_blank?
     __decorates__ivars
     __decorates_collection_ivars__
-  end
-
-  def __validate_decorates_present_
-    unless __has_decorates?
-      raise "Internal method '__decorates__' not found. You need to include the 'decorates_before_render' gem " 
-    end
   end
 
   def __has_decorates?

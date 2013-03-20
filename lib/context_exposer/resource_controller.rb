@@ -58,7 +58,7 @@ module ContextExposer::ResourceController
     end
 
     def _normalized_resource_list
-      _normalized_resource_name.pluralize + '_list'
+      _normalized_resource_name.singularize + '_list'
     end
 
     def _normalized_resource_name

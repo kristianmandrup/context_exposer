@@ -98,7 +98,7 @@ class PostsController < ActionController::Base
   exposed(:posts)       { Post.all } 
 
   # Array of model instances
-  exposed(:posts_list)  { Post.all.to_a } 
+  exposed(:post_list)   { Post.all.to_a } 
 end
 ```
 
@@ -148,7 +148,7 @@ The `ResourceController` automatically sets up the typical singular and plural-f
 
 * `post` - one Post instance
 * `posts` - Search Relatation (for lazy load or further scoping)
-* `posts_list` - Array of Post instances
+* `post_list` - Array of Post instances
 
 This simplifies the above `PostsController` example to this:
 
@@ -161,7 +161,7 @@ class PostsController < ActionController::Base
 end
 ```
 
-The macro `expose_resources` optionally takes a list of the types of resource you want to expose. Valid types are `:one`, `:many` and `:list` respectively (for fx: `post`, `posts` and `posts_list`).
+The macro `expose_resources` optionally takes a list of the types of resource you want to expose. Valid types are `:one`, `:many` and `:list` respectively (for fx: `post`, `posts` and `post_list`).
 
 `ContextExposer::ResourceController`  uses the following internal logic for its default functionality. You can override these methods to customize your behavior as needed.
 

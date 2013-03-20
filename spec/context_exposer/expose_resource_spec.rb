@@ -14,6 +14,8 @@ class PostsController < ActionController::Base
   end
 
   def index
+    configure_exposed_context
+    render
   end
 
   protected
@@ -72,8 +74,8 @@ describe ContextExposer::ResourceController do
           expect(subject).to respond_to(:posts)
         end      
 
-        it "defines a method :posts_list" do
-          expect(subject).to respond_to(:posts_list)
+        it "defines a method :post_list" do
+          expect(subject).to respond_to(:post_list)
         end      
 
         context 'post' do
@@ -93,14 +95,22 @@ describe ContextExposer::ResourceController do
           subject     { posts }
           let(:posts) { ctx.posts }
 
+          before :each do        
+            controller.index
+          end
+
           it "calling method :posts returns all posts " do
             expect(subject).to eq [@post1, @post2]
           end    
         end
 
-        context 'posts_list' do
-          subject          { posts_list }
-          let(:posts_list) { ctx.posts_list }
+        context 'post_list' do
+          subject         { post_list }
+          let(:post_list) { ctx.post_list }
+
+          before :each do        
+            controller.index
+          end
 
           it "calling method :posts_list returns all posts " do
             expect(subject).to eq [@post1, @post2]

@@ -16,6 +16,7 @@ class MyController < ActionController::Base
 
   def show
     configure_exposed_context
+    save_exposed_context
   end
 
   protected
@@ -30,6 +31,7 @@ class MyCoolController < ActionController::Base
 
   def show
     configure_exposed_context
+    save_exposed_context
   end
 
   protected
@@ -79,7 +81,7 @@ describe ContextExposer::BaseController do
       expect(subject.configured_exposed_context?).to be_true
     end
 
-    context 'context' do
+    context 'ctx' do
       subject { controller.ctx }
 
       it "is an instance of ContextExposer::ViewContext" do
@@ -102,6 +104,54 @@ describe ContextExposer::BaseController do
         expect(subject.bird).to eq "Bird"
       end      
     end
+
+    context 'PageContext' do
+      subject { page_context }
+
+      let(:page_context) { ContextExposer::PageContext.instance }
+
+      it "has a page" do
+        expect(subject.page).to be_a ContextExposer::Page
+      end            
+
+      it "has a ctx" do
+        expect(subject.ctx).to be_a ContextExposer::ViewContext
+      end      
+
+      context 'page' do
+        subject    { page }
+
+        let(:page) { page_context.page }
+
+        it "has a name" do
+          expect(subject.name).to eq 'show_post'
+        end              
+
+        it "has a type" do
+          expect(subject.type).to eq 'show'
+        end              
+
+        it "has an action" do
+          expect(subject.action).to eq 'show'
+        end              
+
+        it "has a resource" do
+          expect(subject.resource).to be_a ContextExposer::Page::Resource
+        end              
+
+        context 'resource' do
+          subject { page.resource }
+
+          it "has a name" do
+            expect(subject.name).to eq 'post'
+          end              
+
+          it "has a type" do
+            expect(subject.type).to eq :item
+          end              
+        end
+      end      
+    end
   end
 
   describe 'MyCoolController' do
@@ -114,7 +164,7 @@ describe ContextExposer::BaseController do
       controller.show
     end
 
-    context 'context' do
+    context 'ctx' do
       subject { controller.ctx }
 
       it "inherits from ContextExposer::ViewContext" do

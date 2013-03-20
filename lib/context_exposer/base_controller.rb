@@ -8,6 +8,8 @@ module ContextExposer::BaseController
     # before_filter :configure_exposed_context
     set_callback :process_action, :before, :configure_exposed_context
 
+    set_callback :process_action, :after,  :save_exposed_context
+
     expose_context :ctx
   end
 
@@ -81,6 +83,24 @@ module ContextExposer::BaseController
       options[:cached] ? _add_cached_ctx_method(obj, name) : _add_ctx_method(obj, name)
     end
     @configured_exposed_context = true
+  end
+
+  def save_exposed_context
+    ContextExposer::PageContext.instance.configure ctx, page_obj
+  end
+
+  def page_obj
+    @page ||= build_page_obj
+  end
+
+  def build_page_obj
+    return @page if @page
+    @page = ContextExposer::Page.instance
+    clazz = self.class
+    @page.resource.name = clazz._normalized_resource_name if clazz.respond_to? :_normalized_resource_name
+    @page.name = page_name if respond_to? :page_name
+    @page.controller = self
+    @page
   end
 
   def configured_exposed_context?
