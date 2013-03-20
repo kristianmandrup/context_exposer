@@ -12,7 +12,8 @@ group :test do
   gem 'capybara', '>= 2.0'
   gem 'spork-rails', '>= 3.0'
 
-  gem 'decent_exposure'
+  gem 'draper', '>= 1.1.0'
+  gem 'decent_exposure', '>= 2.0.0'
   gem 'decorates_before_rendering', github: 'ohwillie/decorates_before_rendering'
 
   # gem 'factory_girl_rails', '>= 3.0'
