@@ -3,6 +3,6 @@ module ContextExposer
   end
 end
 
-%w{base key_filter with_decent_exposure with_decorates_before with_instance_vars}.each do |name|
+%w{base key_filter with_decent_exposure with_decorates_before with_instance_vars with_draper}.each do |name|
   require "context_exposer/integrations/#{name}"
 end

@@ -1,15 +1,12 @@
 module ContextExposer
   module ViewHelpers
-    def render_ctx *args
-      opts = args.last
-      if opts.kind_of?(Hash) && opts[:locals]
-        args.last[:locals].merge!(page_context: ContextExposer::PageContext.instance)
-      end
-      super *args
-    end
-
+    # setup page_context delegators
     def ctx
       page_context.ctx
+    end
+
+    def the_page
+      page_context.page
     end
   end
 end

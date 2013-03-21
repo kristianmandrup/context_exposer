@@ -10,7 +10,8 @@ module ContextExposer::BaseController
 
     set_callback :process_action, :after,  :save_exposed_context
 
-    expose_context :ctx
+    expose_context  :ctx
+    _expose_method  :page_ctx
   end
 
   def view_ctx
@@ -19,6 +20,11 @@ module ContextExposer::BaseController
   alias_method :ctx, :view_ctx
 
   module ClassMethods
+    def _expose_method name
+      helper_method name.to_sym
+      hide_action name.to_sym
+    end      
+
     def normalized_resource_name
       self.to_s.demodulize.sub(/Controller$/, '').underscore.singularize
     end
@@ -89,8 +95,7 @@ module ContextExposer::BaseController
           "Consider a different exposure name\n" \
           "#{caller.first}"
       end    
-      helper_method name
-      hide_action name
+      _expose_method name
       @_exposed_view_context = true
     end
 
@@ -116,7 +121,11 @@ module ContextExposer::BaseController
   end
 
   def save_exposed_context
-    ContextExposer::PageContext.instance.configure ctx, page_obj
+    @page_ctx = ContextExposer::PageContext.instance.configure ctx, page_obj
+  end
+
+  def page_ctx
+    @page_ctx
   end
 
   def page_obj

@@ -1,3 +1,5 @@
+require 'support/models/base/clazz_methods'
+
 class Base
   include ClazzMethods
 

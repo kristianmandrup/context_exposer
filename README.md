@@ -409,13 +409,27 @@ Please see: http://alindeman.github.com/2012/11/11/rspec-rails-and-capybara-2.0-
 
 The feature tests can be found in `spec/app`
 
-`$ bundle exec rspec spec/context_exposer`
+run:
+
+`$ bundle exec rspec spec/app`
+
+* posts_spec - basic functionality
+* items_spec - cached resource
+* animals_spec - Draper decorator integration
+
+TODO:
+
+- Many more app integration tests are needed :P
 
 ### Unit tests (specs)
 
 The unit tests can be found in `spec/context_exposer`
 
 `$ bundle exec rspec spec/context_exposer`
+
+TODO:
+
+- Many more unit tests are needed :P
 
 ## Contributing
 

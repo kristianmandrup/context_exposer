@@ -15,6 +15,7 @@ Spork.prefork do
   
   require "rspec"
 
+  require 'draper'
   require 'decent_exposure'
   require 'decorates_before_rendering'
 
@@ -24,6 +25,7 @@ Spork.prefork do
   ENV["RAILS_ENV"] = "test"
 
   # Load support files
+  Dir["#{File.dirname(__FILE__)}/support/models/base"]
   Dir["#{File.dirname(__FILE__)}/support/models/**/*.rb"].each { |f| require f }
   Dir["#{File.dirname(__FILE__)}/support/models/*.rb"].each { |f| require f }  
   Dir["#{File.dirname(__FILE__)}/support/decorators/*.rb"].each { |f| require f }  

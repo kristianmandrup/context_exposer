@@ -14,7 +14,7 @@ module ContextExposer
     end
 
     def clear!
-      instance_variables.each do |inst_var|
+      inst_variables.each do |inst_var|
         var = inst_var.to_s.sub('@', '')
         self.send("#{var}=", nil)
       end
@@ -39,6 +39,12 @@ module ContextExposer
 
     def map?
       false
+    end
+
+    protected
+
+    def inst_variables
+      [:name, :id, :action, :mode, :controller_name, :type, :resource]
     end
   end
 end

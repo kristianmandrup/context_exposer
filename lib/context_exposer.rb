@@ -17,6 +17,8 @@ end
 
 require "active_support"
 require "context_exposer/core_ext/string"
+require "context_exposer/integrations"
+
 require "context_exposer/base_controller"
 require "context_exposer/resource_controller"
 require "context_exposer/cached_resource_controller"

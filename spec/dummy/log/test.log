@@ -2644,3 +2644,37 @@ Started GET "/items/1" for 127.0.0.1 at 2013-03-17 16:40:10 +0100
 Processing by ItemsController#show as HTML
   Parameters: {"id"=>"1"}
 Completed 200 OK in 4ms (Views: 3.2ms)
+Started GET "/animals" for 127.0.0.1 at 2013-03-21 10:48:23 +0100
+Started GET "/animals/1" for 127.0.0.1 at 2013-03-21 10:48:23 +0100
+Started GET "/animals" for 127.0.0.1 at 2013-03-21 10:49:22 +0100
+Processing by AnimalsController#index as HTML
+  Rendered animals/index.html.erb within layouts/application (2.2ms)
+Completed 500 Internal Server Error in 16ms
+Started GET "/animals/1" for 127.0.0.1 at 2013-03-21 10:49:22 +0100
+Processing by AnimalsController#show as HTML
+  Parameters: {"id"=>"1"}
+Completed 500 Internal Server Error in 4ms
+Started GET "/animals" for 127.0.0.1 at 2013-03-21 10:49:58 +0100
+Processing by AnimalsController#index as HTML
+  Rendered animals/index.html.erb within layouts/application (7.4ms)
+Completed 500 Internal Server Error in 24ms
+Started GET "/animals/1" for 127.0.0.1 at 2013-03-21 10:49:59 +0100
+Processing by AnimalsController#show as HTML
+  Parameters: {"id"=>"1"}
+Completed 500 Internal Server Error in 4ms
+Started GET "/animals" for 127.0.0.1 at 2013-03-21 10:51:18 +0100
+Processing by AnimalsController#index as HTML
+  Rendered animals/index.html.erb within layouts/application (2.0ms)
+Completed 500 Internal Server Error in 30ms
+Started GET "/animals/1" for 127.0.0.1 at 2013-03-21 10:51:18 +0100
+Processing by AnimalsController#show as HTML
+  Parameters: {"id"=>"1"}
+Completed 500 Internal Server Error in 4ms
+Started GET "/animals" for 127.0.0.1 at 2013-03-21 10:52:28 +0100
+Processing by AnimalsController#index as HTML
+  Rendered animals/index.html.erb within layouts/application (1.4ms)
+Completed 200 OK in 13ms (Views: 11.4ms)
+Started GET "/animals/1" for 127.0.0.1 at 2013-03-21 10:52:28 +0100
+Processing by AnimalsController#show as HTML
+  Parameters: {"id"=>"1"}
+Completed 200 OK in 5ms (Views: 3.4ms)

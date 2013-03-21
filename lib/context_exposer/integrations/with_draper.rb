@@ -1,6 +1,9 @@
+require 'draper/decorates_assigned'
+
 module ContextExposer::Integrations
-  module WithDecentExposure
+  module WithDraper
     extend ActiveSupport::Concern
+    extend Draper::DecoratesAssigned
 
     module ClassMethods
       def decorates_assigned(*variables)
