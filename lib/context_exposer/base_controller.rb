@@ -20,6 +20,12 @@ module ContextExposer::BaseController
   alias_method :ctx, :view_ctx
 
   module ClassMethods
+    def turn_off_view_assigns
+      define_method :view_assigns do
+        {}
+      end
+    end
+
     def _expose_method name
       helper_method name.to_sym
       hide_action name.to_sym

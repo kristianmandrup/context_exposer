@@ -5,7 +5,7 @@ module ContextExposer
       page_context.ctx
     end
 
-    def the_page
+    def page
       page_context.page
     end
   end

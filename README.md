@@ -37,15 +37,23 @@ Use the `exposed` method which takes a name of the method to be created on the V
 Example:
 
 ```ruby
-class PostsController < ActionController::Base
+class ApplicationController
   include ContextExposer::BaseController
-  
+
+  turn_off_view_assigns
+end
+
+class PostsController < ApplicationController    
   exposed(:post)  { Post.find params[:id] }
   exposed(:posts) { Post.find params[:id] }
 end
 ```
 
-The view will have the methods exposed and available on the `ctx` object.
+Note: In this example we included the `ContextExposer::BaseController` in the ApplicationController so that the functionality becomes available for all controllers based on the ApplicationController. 
+
+We used the macro `turn_off_view_assigns` (part of `ContextExposer::BaseController`) in order to turn off the ability for controllers to pass instance variables to the views.
+
+The view will have the methods `post` and `posts` exposed and available on the `ctx` or `view_ctx` object.
 
 HAML view example
 
@@ -58,7 +66,7 @@ HAML view example
 You can also have the exposed methods automatically cache the result in an instance variable, by using the `expose_cached` variant.
 
 ```ruby
-class PostsController < ActionController::Base
+class PostsController < ApplicationController
   include ContextExposer::BaseController
   
   expose_cached(:post)  { Post.find params[:id] }
@@ -66,16 +74,16 @@ class PostsController < ActionController::Base
 end
 ```
 
-This is especially useful if used in combination with `decorates_before_rendering`, which only works on cached objects.
+This is especially useful if used to decorate before rendering, fx by using the gem `decorates_before_rendering`.
 
 ## Macros
 
-You can also choose to use the class macros made available on `ActionController::Base` as Rails loads.
+You can also choose to use the class macros made available on `ContextExposer::BaseController` as Rails loads.
 
-Use `:base` or `resource` or your custom extension to include the ContextExposer controller module of your choice. The macro `context_exposer :base` is equivalent to writing `include ContextExposer::BaseController`
+Use `:base` or `:resource` or your custom extension to include the ContextExposer controller module of your choice. The macro `context_exposer :base` is equivalent to writing `include ContextExposer::BaseController`
 
 ```ruby
-class PostsController < ActionController::Base
+class PostsController < ApplicationController
   context_exposer :base
 ```
 
@@ -87,7 +95,7 @@ You can also override the class method of the same name for custom class name co
 Example:
 
 ```ruby
-class PostsController < ActionController::Base
+class PostsController < ApplicationController
   include ContextExposer::BaseController
   
   view_ctx_class :posts_view_context
@@ -154,7 +162,7 @@ The `ResourceController` automatically sets up the typical singular and plural-f
 This simplifies the above `PostsController` example to this:
 
 ```ruby
-class PostsController < ActionController::Base
+class PostsController < ApplicationController
   # alternatively: context_exposer :resource
   include ContextExposer::ResourceController
 
@@ -201,11 +209,12 @@ end
 ```
 
 ```ruby
-class PostsController < ActionController::Base
+class PostsController < ApplicationController
   include NamedResourceController
 end
+```
 
-Tip: If you put your module inside the `ContextExposer` namespace, you can even use the `context_exposer` macro ;)
+Tip: If you put your custom module inside the `ContextExposer` namespace, you can even use the `context_exposer` macro ;)
 
 ## Integrations with other exposure gems and patterns
 
@@ -214,6 +223,7 @@ You can use the class macro `integrate_with(name)` to integrate with either:
 * decent_exposure - `integrate_with :decent_exposure`
 * decorates_before_rendering - `integrate_with :decorates_before`
 * instance vars - `integrate_with :instance_vars`
+* drapper - `integrate_with :instance_vars`
 
 Note: You can even integrate with multiple strategies
 
@@ -229,13 +239,14 @@ For decorated instance variables (see `decorates_before_rendering` gem), similar
 
 All of these `context_expose :xxxx` methods can optionally take an `:except` or `:only` option with a list of keys, similar to a `before_filter`.
 
-The method `context_expose :decorated_instance_vars` can additionally take a `:for`option of either `:collection` or `:non_collection` to limit the type of instance vars exposed.
+The method `context_expose :decorated_instance_vars` can additionally take a `:for` option of either `:collection` or `:non_collection` to limit the type of instance vars exposed.
 
 `context_expose` integration
 
 * :instance_vars
-* :decorated_instance_vars
-* :decently
+* :decorated_instance_vars (decorates_before_rendering)
+* :decently (decent_exposure)
+* :assigned (draper)
 
 Here is a full example demonstrating integration with `decent_exposure`.
 
@@ -243,17 +254,17 @@ Here is a full example demonstrating integration with `decent_exposure`.
 # using gem 'decent_exposure'
 # auto-included in ActionController::Base
 
-class PostsController < ActionController::Base
+class PostsController < ApplicationController
   # make context_expose_decently method available
   context_exposer :base, with :decent_exposure
 
-  expose(:posts)  { Post.all.order(:created_at, :asc) }
+  expose(:posts)  { Post.all.asc(:created_at) }
   expose(:post)   { Post.first}
   expose(:postal) { '1234' }
 
   # mirror all methods exposed via #expose on #ctx object 
   # except for 'postal' method
-  context_expose :decently except: 'postal'
+  context_expose :decently, except: 'postal'
 end
 ```
 
@@ -276,9 +287,9 @@ decorates_assigned :articles, with: PaginatingCollectionDecorator
 
 Since this functionality is very similar to fx `decent_exposure`, it can be used with `ctx` in a similar way. Simply use the `context_expose_assigned` like the `context_expose_decently` macro.
 
-`context_expose_assigned`
+`context_expose :assigned`
 
-`context_expose_assigned only: %w{post posts}
+`context_expose :assigned, only: %w{post posts}
 
 ## Decorates before rendering
 
@@ -288,7 +299,7 @@ A patch for the `decorates_before_render` gem is currently made available.
 
 You typically use this in a Rails initializer. This way, `decorates_before_rendering` should try to decorate all your exposed variables before rendering, whether your view context is exposed as instance vars, methods or on the `ctx` object of the view ;)
 
-Note: You can now also use the macro `decorates_before_render` to include the `DecoratesBeforeRendering` module.
+Note: You can also use the macro `decorates_before_render` to include the `DecoratesBeforeRendering` module.
 
 ### Auto-finding a decorator
 
@@ -297,7 +308,7 @@ For the patched version of `decorates_before_render` to work, your exposed and c
 Example:
 
 ```ruby
-class PostsController < ActionController::Base
+class PostsController < ApplicationController
   decorates_before_render
   context_exposer :base, with :decent_exposure
 
@@ -311,14 +322,17 @@ class PostsController < ActionController::Base
 end
 ```
 
+Example: Model with a `decorator` method to return the class name of the decorator to use.
+
 ```ruby
 class Post < ActiveRecord::Base
   def decorator contrl
     contrl.send(:admin?) ? 'Admin::PostDecorator' : model_name      
   end
 end
+```
 
-### Auto-detection Error handling
+### Error handling for Auto-detection 
 
 If the auto-decoration can't find a decorator for an exposed variable (or method), it will either ignore it (not decorate it) or call `__handle_decorate_error_(error)` which by default will log a Rails warning. Override this error handler as it suits you.
 
@@ -326,16 +340,18 @@ If the auto-decoration can't find a decorator for an exposed variable (or method
 
 As you have the `ctx` object encapsulate all the view state in one place, you can simplify
 your partial calls to `render partial: 'my/partial/template', locals: {ctx: ctx}`.
-However, if you use nested partials it quickly feels repetitive...
+However, if you use nested partials it quickly gets repetitive and ugly with locals hashes everywhere...
 
-Which is why this pattern is now encapsulated in the view helper `render_ctx` which auto-populates the `:locals` hash with a local `page_context` variable that points to a `ContextExposer::PageContext.instance` which contains the `ctx` object :)
+Which is why this pattern is now encapsulated as global view helpers:
 
-Furthermore, a delegation of `ctx` to  `page_context.ctx` is defined so you can still access `ctx` directly from within the views.
+* `page_context`
+* `ctx` (data context)
+* `page`
 
 So you then only have to use the locals hash if you want to pass on variables not part of `ctx`.
 
 ```ruby
-render_ctx partial: 'my/partial/template'
+render partial: 'my/partial/template', locals {very_local: 1}
 ```
 
 ### Page object
@@ -352,7 +368,7 @@ The page name will normally be calculated by concatenating action, resource name
 By default these methods will use the `base_list_actions` (index) and `base_item_actions` (show, new, edit). You can override/extend these conventions and provide your own `list_actions` and `item_actions` class methods for each controller. Macros are provided to generate these methods from a simple list.
 
 ```ruby
-class Admin::BirdLocationController < ActionController::Base
+class Admin::BirdLocationController < ApplicationController
   # expose, decorate etc left out
 
   # use macros to configure extra REST-like actions
